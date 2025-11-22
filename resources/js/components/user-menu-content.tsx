@@ -11,6 +11,7 @@ import { edit } from '@/routes/profile';
 import { type User } from '@/types';
 import { Link, router } from '@inertiajs/react';
 import { LogOut, Settings } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface UserMenuContentProps {
     user: User;
@@ -22,6 +23,7 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
     const handleLogout = () => {
         cleanup();
         router.flushAll();
+        toast.success('you have been logged out successfully');
     };
 
     return (
