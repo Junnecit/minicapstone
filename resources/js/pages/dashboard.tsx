@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
@@ -20,7 +20,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Dashboard() {
-    const [date, setDate] = useState<Date | undefined>(new Date());
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -133,7 +132,7 @@ export default function Dashboard() {
                             <p className="text-4xl font-semibold">17</p>
                             <div className="text-sm text-white/80">Needs immediate restock</div>
                             <ul className="text-xs text-white/70 space-y-1">
-                                <li>• iPhone 12 glass – 3 remaining</li>
+                                <li>• iPhone 12 glass – 3 remaining</li>    
                                 <li>• Samsung batteries – 5 remaining</li>
                                 <li>• Charger cables – 9 remaining</li>
                             </ul>
