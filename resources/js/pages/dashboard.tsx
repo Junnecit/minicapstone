@@ -36,8 +36,8 @@ export default function Dashboard() {
                                 <Sparkles className="h-8 w-8 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-bold text-white">
-                                    Hello, {auth.user?.name || 'Admin'}! 👋
+                                <h1 className="text-2xl font-bold text-white">
+                                    Hello,Admin {auth.user?.name || 'Admin'}! 👋
                                 </h1>
                                 <p className="mt-1 text-lg text-white/90">
                                     Welcome back to your dashboard
