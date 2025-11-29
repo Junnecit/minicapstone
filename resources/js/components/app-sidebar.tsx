@@ -11,9 +11,11 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as categoriesIndex } from '@/routes/categories';
+import { index as productsIndex } from '@/routes/products';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { SquareUserRound, PhilippinePeso, LayoutGrid,ShoppingBasket,Weight,Columns4 } from 'lucide-react';
+import { SquareUserRound, PhilippinePeso, Cog ,LayoutGrid,ShoppingBasket,Weight,Columns4,Wrench } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -24,18 +26,28 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'categories',
-        href: '#',
+        href: categoriesIndex(),
         icon: Columns4,
     },
     {
         title: 'Products',
-        href: 'products' ,
+        href: productsIndex() ,
         icon: ShoppingBasket,
     },
     {
         title: 'Point of Sales',
         href: '#',
         icon: Weight,
+    },
+    {
+        title: 'Repair Products',
+        href: '#',
+        icon: Cog,
+    },
+    {
+        title: 'Repairs',
+        href: '#',
+        icon: Wrench,
     },
     {
         title: 'Sales',
