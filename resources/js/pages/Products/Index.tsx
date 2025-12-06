@@ -1,112 +1,84 @@
 import AppLayout from '@/layouts/app-layout';
-import { index as productsIndex } from '@/routes/products';
 import { type BreadcrumbItem } from '@/types';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { DataTable } from '@/components/DataTable';
+import { ProductFormModal, type Product, type Category } from './ProductFormModal';
+import { getColumns } from './columns';
+import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Products',
-        href: productsIndex().url,
+        href: '/products',
     },
 ];
 
-export default function Index({ products }: { products: any[] }) {
-    const { data, setData, post, put, delete: destroy } = useForm({
-        name: '',
-        price: '',
-    });
+interface Props {
+    products: Product[];
+    categories: Category[];
+}
 
-    const submit = (e: React.FormEvent) => {
-        e.preventDefault();
-        post('/products');
+export default function Index({ products: initialProducts, categories }: Props) {
+    const { props } = usePage();
+    const flash = props.flash as any;
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState<Product | undefined>();
+    const [products, setProducts] = useState(initialProducts);
+
+    useEffect(() => {
+        if (flash?.success) {
+            toast.success(flash.success);
+            // Refresh products list after a short delay
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        }
+        if (flash?.error) {
+            toast.error(flash.error);
+        }
+    }, [flash]);
+
+    const handleEdit = (product: Product) => {
+        console.log('Editing product:', product); // Debug log
+        setSelectedProduct(product);
+        setModalOpen(true);
     };
 
-    const update = (product: any) => {
-        const newName = prompt('New name:', product.name);
-        const newPrice = prompt('New price:', product.price);
+    const handleCreate = () => {
+        console.log('Creating new product'); // Debug log
+        setSelectedProduct(undefined);
+        setModalOpen(true);
+    };
 
-        if (newName && newPrice) {
-            put(`/products/${product.id}`, {
-                data: {
-                    name: newName,
-                    price: newPrice,
-                },
-            });
+    const handleModalClose = (open: boolean) => {
+        setModalOpen(open);
+        if (!open) {
+            setSelectedProduct(undefined);
         }
     };
 
-    const remove = (id: number) => {
-        if (confirm('Delete this product?')) {
-            destroy(`/products/${id}`);
-        }
-    };
+    const columns = getColumns(handleEdit);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Products" />
 
             <div className="p-4">
-                <h1 className="text-xl font-bold mb-4">Products CRUD</h1>
+                <div className="flex justify-between items-center mb-4">
+                    <h1 className="text-xl font-bold">Products</h1>
+                    <Button onClick={handleCreate}>+ Add Product</Button>
+                </div>
 
-                {/* CREATE */}
-                <form onSubmit={submit} className="mb-4">
-                    <input
-                        type="text"
-                        placeholder="Product name"
-                        className="border p-2 mr-2"
-                        onChange={(e) => setData('name', e.target.value)}
-                    />
+                <DataTable columns={columns} data={products} />
 
-                    <input
-                        type="number"
-                        placeholder="Price"
-                        className="border p-2 mr-2"
-                        onChange={(e) => setData('price', e.target.value)}
-                    />
-
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded">
-                        Add
-                    </button>
-                </form>
-
-                {/* LIST */}
-                <table className="w-full border">
-                    <thead>
-                        <tr className="bg-gray-100">
-                            <th className="border p-2">ID</th>
-                            <th className="border p-2">Name</th>
-                            <th className="border p-2">Price</th>
-                            <th className="border p-2">Actions</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {products.map((p) => (
-                            <tr key={p.id}>
-                                <td className="border p-2">{p.id}</td>
-                                <td className="border p-2">{p.name}</td>
-                                <td className="border p-2">{p.price}</td>
-                                <td className="border p-2">
-
-                                    <button
-                                        onClick={() => update(p)}
-                                        className="bg-yellow-500 text-white px-3 py-1 rounded mr-2"
-                                    >
-                                        Edit
-                                    </button>
-
-                                    <button
-                                        onClick={() => remove(p.id)}
-                                        className="bg-red-500 text-white px-3 py-1 rounded"
-                                    >
-                                        Delete
-                                    </button>
-
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <ProductFormModal
+                    open={modalOpen}
+                    onOpenChange={handleModalClose}
+                    product={selectedProduct}
+                    categories={categories}
+                />
             </div>
         </AppLayout>
     );
