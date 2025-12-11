@@ -26,5 +26,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('pos/checkout', [POSController::class, 'checkout'])->name('pos.checkout');
 
 });
- 
-require __DIR__.'/settings.php';
+
+require __DIR__ . '/settings.php';

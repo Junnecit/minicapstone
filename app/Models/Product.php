@@ -14,7 +14,7 @@ class Product extends Model
         'price',
         'cost',
         'stock_quantity',
-        'image', // ✅ Add this
+        'image', 
     ];
 
     public function category()

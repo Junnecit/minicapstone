@@ -23,7 +23,7 @@ import { toast } from "sonner";
 
 export type Category = {
     id: number;
-    categorie_name: string;
+    category_name: string;
     created_at?: string;
 };
 
@@ -37,7 +37,7 @@ export const getColumns = (onEdit: (category: Category) => void): ColumnDef<Cate
         header: "ID",
     },
     {
-        accessorKey: "categorie_name",
+        accessorKey: "category_name",
         header: "Category Name",
     },
     {
@@ -91,7 +91,7 @@ export const getColumns = (onEdit: (category: Category) => void): ColumnDef<Cate
                         <AlertDialogHeader>
                             <AlertDialogTitle>Delete Category</AlertDialogTitle>
                             <AlertDialogDescription>
-                                Are you sure you want to delete <strong>{category.categorie_name}</strong>? This action cannot be undone.
+                                Are you sure you want to delete <strong>{category.category_name}</strong>? This action cannot be undone.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <div className="flex gap-2 justify-end">

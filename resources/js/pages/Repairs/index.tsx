@@ -54,7 +54,7 @@ export default function POSIndex() {
   // Handle add to cart
   const handleAddToCart = (product: Product, quantity: number) => {
     addToCart(product, quantity);
-    toast.success(`${product.name} added to cart!`);
+    toast.success(`₱{product.name} added to cart!`);
   };
 
   // Handle checkout
@@ -159,72 +159,31 @@ export default function POSIndex() {
     setTransactionData(null);
   };
 
-    return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Products" />
-
-            <div className="p-4">
-                <h1 className="text-xl font-bold mb-4">Products CRUD</h1>
-
-                {/* CREATE */}
-                <form onSubmit={submit} className="mb-4">
-                    <input
-                        type="text"
-                        placeholder="Product name"
-                        className="border p-2 mr-2"
-                        onChange={(e) => setData('name', e.target.value)}
-                    />
-
-                    <input
-                        type="number"
-                        placeholder="Price"
-                        className="border p-2 mr-2"
-                        onChange={(e) => setData('price', e.target.value)}
-                    />
-
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded">
-                        Add
-                    </button>
-                </form>
-
-                {/* LIST */}
-                <table className="w-full border">
-                    <thead>
-                        <tr className="bg-gray-100">
-                            <th className="border p-2">ID</th>
-                            <th className="border p-2">Name</th>
-                            <th className="border p-2">Price</th>
-                            <th className="border p-2">Actions</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {products.map((p) => (
-                            <tr key={p.id}>
-                                <td className="border p-2">{p.id}</td>
-                                <td className="border p-2">{p.name}</td>
-                                <td className="border p-2">{p.price}</td>
-                                <td className="border p-2">
-
-                                    <button
-                                        onClick={() => update(p)}
-                                        className="bg-yellow-500 text-white px-3 py-1 rounded mr-2"
-                                    >
-                                        Edit
-                                    </button>
-
-                                    <button
-                                        onClick={() => remove(p.id)}
-                                        className="bg-red-500 text-white px-3 py-1 rounded"
-                                    >
-                                        Delete
-                                    </button>
-
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+  return (
+    <AppLayout>
+      <div className="flex h-screen bg-gray-100">
+        {/* Main Content */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-6 space-y-6">
+            {/* Header */}
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Point of Sale</h1>
+                <p className="text-gray-600 mt-1">Browse and select products</p>
+              </div>
+              {/* Mobile Cart Button */}
+              <div className="lg:hidden">
+                <MobileCartDrawer
+                  items={items}
+                  subtotal={subtotal}
+                  tax={tax}
+                  total={total}
+                  onUpdateQuantity={updateQuantity}
+                  onRemoveItem={removeItem}
+                  onCheckout={handleCheckout}
+                  isLoading={isLoading}
+                />
+              </div>
             </div>
 
             {/* Products Grid */}

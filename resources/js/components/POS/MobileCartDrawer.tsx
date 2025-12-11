@@ -58,7 +58,7 @@ export function MobileCartDrawer({
                   <div>
                     <h4 className="font-semibold text-sm">{item.name}</h4>
                     <p className="text-xs text-gray-600">
-                      ${item.price.toFixed(2)}/unit
+                      ₱{item.price.toFixed(2)}/unit
                     </p>
                   </div>
                   <Button
@@ -98,7 +98,7 @@ export function MobileCartDrawer({
                     </Button>
                   </div>
                   <span className="font-bold text-sm">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    ₱{(item.price * item.quantity).toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -112,11 +112,11 @@ export function MobileCartDrawer({
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal:</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>₱{subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Tax:</span>
-                <span>${tax.toFixed(2)}</span>
+                <span>₱{tax.toFixed(2)}</span>
               </div>
             </div>
 
@@ -125,7 +125,7 @@ export function MobileCartDrawer({
             <div className="flex justify-between font-bold">
               <span>Total:</span>
               <span className="text-green-600 text-lg">
-                ${total.toFixed(2)}
+                ₱{total.toFixed(2)}
               </span>
             </div>
 
@@ -137,6 +137,7 @@ export function MobileCartDrawer({
               {isLoading ? 'Processing...' : 'Checkout'}
             </Button>
           </div>
+
         )}
       </SheetContent>
     </Sheet>

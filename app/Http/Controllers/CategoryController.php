@@ -24,7 +24,7 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'categorie_name' => 'required|string|max:255|unique:categories',
+            'category_name' => 'required|string|max:255|unique:categories',
         ]);
 
         Category::create($validated);
@@ -42,7 +42,7 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         $validated = $request->validate([
-            'categorie_name' => 'required|string|max:255|unique:categories,categorie_name,' . $category->id,
+            'category_name' => 'required|string|max:255|unique:categories,category_name,' . $category->id,
         ]);
 
         $category->update($validated);

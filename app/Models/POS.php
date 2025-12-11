@@ -4,7 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+class POS extends Model
 {
-    protected $fillable = ['category_name'];
+    protected $fillable = ['name', 'price'];
+    
 }

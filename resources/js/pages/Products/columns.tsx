@@ -31,7 +31,7 @@ export type Product = {
     image?: string;
     category?: {
         id: number;
-        categorie_name: string;
+        category_name: string;
     };
 };
 
@@ -76,9 +76,9 @@ export const getColumns = (onEdit: (product: Product) => void): ColumnDef<Produc
         header: "Stock",
     },
     {
-        accessorKey: "category.categorie_name",
+        accessorKey: "category_name",
         header: "Category",
-        cell: ({ row }) => row.original.category?.categorie_name || "—",
+        cell: ({ row }) => row.original.category?.category_name || "—",
     },
     {
         id: "actions",

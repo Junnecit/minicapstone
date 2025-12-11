@@ -32,7 +32,7 @@ export interface Product {
 
 export interface Category {
     id: number;
-    categorie_name: string;
+    category_name: string;
 }
 
 interface ProductFormModalProps {
@@ -227,7 +227,7 @@ export function ProductFormModal({ open, onOpenChange, product, categories }: Pr
                                 <SelectContent>
                                     {categories.map((cat) => (
                                         <SelectItem key={cat.id} value={cat.id.toString()}>
-                                            {cat.categorie_name}
+                                            {cat.category_name}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>

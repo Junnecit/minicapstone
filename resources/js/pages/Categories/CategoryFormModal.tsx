@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 
 interface Category {
     id: number;
-    categorie_name: string;
+    category_name: string;
 }
 
 interface CategoryFormModalProps {
@@ -26,7 +26,7 @@ interface CategoryFormModalProps {
 
 export function CategoryFormModal({ open, onOpenChange, category }: CategoryFormModalProps) {
     const { data, setData, post, put, processing, errors, reset } = useForm({
-        categorie_name: category?.categorie_name || '',
+        category_name: category?.category_name || '',
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -82,17 +82,17 @@ export function CategoryFormModal({ open, onOpenChange, category }: CategoryForm
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <Label htmlFor="categorie_name">Category Name *</Label>
+                        <Label htmlFor="category_name">Category Name *</Label>
                         <Input
-                            id="categorie_name"
-                            value={data.categorie_name}
-                            onChange={(e) => setData('categorie_name', e.target.value)}
+                            id="category_name"
+                            value={data.category_name}
+                            onChange={(e) => setData('category_name', e.target.value)}
                             placeholder="Enter category name"
-                            className={errors.categorie_name ? 'border-red-500' : ''}
+                            className={errors.category_name ? 'border-red-500' : ''}
                             autoFocus
                         />
-                        {errors.categorie_name && (
-                            <p className="text-red-500 text-sm mt-1">{errors.categorie_name}</p>
+                        {errors.category_name && (
+                            <p className="text-red-500 text-sm mt-1">{errors.category_name}</p>
                         )}
                     </div>
 
