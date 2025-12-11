@@ -4,6 +4,7 @@ import { Head, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 import { DataTable } from '@/components/DataTable';
 import { ProductFormModal, type Product, type Category } from './ProductFormModal';
 import { getColumns } from './columns';
