@@ -155,9 +155,9 @@ export function ReceiptPreview({
           {/* Footer */}
           <div className="text-center border-t-2 border-gray-800 pt-4 space-y-1">
             <p className="font-bold text-sm">Thank You!</p>
-            <p className="text-xs text-gray-600">We appreciate your business</p>
+            <p className="text-xs text-gray-600">Come again to cellhub</p>
             <p className="text-xs text-gray-600 italic mt-2">
-              Powered by POS System
+              Powered by SANTING AND LEMBERT
             </p>
           </div>
         </div>
@@ -173,10 +173,6 @@ export function ReceiptPreview({
           >
             <Printer className="w-4 h-4" />
             Print Receipt
-          </Button>
-          <Button className="bg-green-600 hover:bg-green-700 flex items-center gap-2">
-            <Download className="w-4 h-4" />
-            Save
           </Button>
         </div>
       </DialogContent>
