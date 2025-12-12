@@ -1,39 +1,45 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import { CartItem } from '@/hooks/useCart';
-import { Printer, Download } from 'lucide-react';
+import html2canvas from 'html2canvas';
+import { Download, Printer } from 'lucide-react';
 import { useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
 
+
 interface ReceiptPreviewProps {
-  open: boolean;
-  onClose: () => void;
-  transactionData: {
-    reference_number: string;
-    items: CartItem[];
-    subtotal: number;
-    tax: number;
-    discount: number;
-    total: number;
-    paymentMethod: 'cash' | 'gcash';
-    amountReceived?: number;
-    change?: number;
-    gcashReference?: string;
-    timestamp: string;
-  } | null;
+    open: boolean;
+    onClose: () => void;
+    transactionData: {
+        reference_number: string;
+        items: CartItem[];
+        subtotal: number;
+        tax: number;
+        discount: number;
+        total: number;
+        paymentMethod: 'cash' | 'gcash';
+        amountReceived?: number;
+        change?: number;
+        gcashReference?: string;
+        timestamp: string;
+    } | null;
 }
 
 export function ReceiptPreview({
-  open,
-  onClose,
-  transactionData,
+    open,
+    onClose,
+    transactionData,
 }: ReceiptPreviewProps) {
-  const printRef = useRef<HTMLDivElement>(null);
+    const printRef = useRef<HTMLDivElement>(null);
 
-  const handlePrint = useReactToPrint({
-    contentRef: printRef,
-    pageStyle: `
+    const handlePrint = useReactToPrint({
+        contentRef: printRef,
+        pageStyle: `
       @page {
         size: a4;
         margin: 10mm;
@@ -45,17 +51,37 @@ export function ReceiptPreview({
         }
       }
     `,
-  });
+    });
 
-  if (!transactionData) return null;
+    if (!transactionData) return null;
 
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Receipt Preview</DialogTitle>
-        </DialogHeader>
+    return (
+        <Dialog open={open} onOpenChange={onClose}>
+            <DialogContent className="max-h-screen max-w-2xl overflow-y-auto">
+                <DialogHeader>
+                    <DialogTitle>Receipt Preview</DialogTitle>
+                </DialogHeader>
 
+<<<<<<< HEAD
+                {/* Printable Receipt */}
+                <div
+                    ref={printRef}
+                    className="space-y-4 bg-white p-8 text-sm print:space-y-2 print:p-0"
+                >
+                    {/* Header */}
+                    <div className="space-y-2 border-b-2 border-gray-800 pb-4 text-center">
+                        <h2 className="text-2xl font-bold">MY STORE</h2>
+                        <p className="text-xs text-gray-600">
+                            Professional Point of Sale
+                        </p>
+                        <p className="text-xs text-gray-600">
+                            Receipt #{transactionData.reference_number}
+                        </p>
+                        <p className="text-xs text-gray-600">
+                            {transactionData.timestamp}
+                        </p>
+                    </div>
+=======
         {/* Printable Receipt */}
         <div
           ref={printRef}
@@ -68,6 +94,7 @@ export function ReceiptPreview({
             <p className="text-xs text-gray-600">Receipt #{transactionData.reference_number}</p>
             <p className="text-xs text-gray-600">{transactionData.timestamp}</p>
           </div>
+>>>>>>> 2ed229e62c0db40a52a7d1b338716046be45d1fa
 
           {/* Items Table */}
           <div className="space-y-2">
@@ -85,9 +112,9 @@ export function ReceiptPreview({
                   <tr key={item.id} className="border-b border-gray-200">
                     <td className="py-1">{item.name}</td>
                     <td className="text-right py-1">{item.quantity}</td>
-                    <td className="text-right py-1">₱{item.price.toFixed(2)}</td>
+                    <td className="text-right py-1">${item.price.toFixed(2)}</td>
                     <td className="text-right py-1">
-                      ₱{(item.price * item.quantity).toFixed(2)}
+                      ${(item.price * item.quantity).toFixed(2)}
                     </td>
                   </tr>
                 ))}
@@ -99,23 +126,23 @@ export function ReceiptPreview({
           <div className="border-t-2 border-gray-800 pt-2 space-y-1">
             <div className="flex justify-between">
               <span>Subtotal:</span>
-              <span>₱{transactionData.subtotal.toFixed(2)}</span>
+              <span>${transactionData.subtotal.toFixed(2)}</span>
             </div>
             {transactionData.tax > 0 && (
               <div className="flex justify-between">
                 <span>Tax (12%):</span>
-                <span>₱{transactionData.tax.toFixed(2)}</span>
+                <span>${transactionData.tax.toFixed(2)}</span>
               </div>
             )}
             {transactionData.discount > 0 && (
               <div className="flex justify-between text-green-600">
                 <span>Discount:</span>
-                <span>-₱{transactionData.discount.toFixed(2)}</span>
+                <span>-${transactionData.discount.toFixed(2)}</span>
               </div>
             )}
             <div className="flex justify-between font-bold text-base border-t-2 border-gray-800 pt-1">
               <span>TOTAL:</span>
-              <span>₱{transactionData.total.toFixed(2)}</span>
+              <span>${transactionData.total.toFixed(2)}</span>
             </div>
           </div>
 
@@ -129,11 +156,11 @@ export function ReceiptPreview({
                 </div>
                 <div className="flex justify-between">
                   <span>Amount Received:</span>
-                  <span>₱{transactionData.amountReceived?.toFixed(2)}</span>
+                  <span>${transactionData.amountReceived?.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between font-bold text-base">
                   <span>Change:</span>
-                  <span>₱{transactionData.change?.toFixed(2)}</span>
+                  <span>${transactionData.change?.toFixed(2)}</span>
                 </div>
               </>
             ) : (
@@ -155,9 +182,9 @@ export function ReceiptPreview({
           {/* Footer */}
           <div className="text-center border-t-2 border-gray-800 pt-4 space-y-1">
             <p className="font-bold text-sm">Thank You!</p>
-            <p className="text-xs text-gray-600">Come again to cellhub</p>
+            <p className="text-xs text-gray-600">We appreciate your business</p>
             <p className="text-xs text-gray-600 italic mt-2">
-              Powered by SANTING AND LEMBERT
+              Powered by POS System
             </p>
           </div>
         </div>
@@ -173,6 +200,10 @@ export function ReceiptPreview({
           >
             <Printer className="w-4 h-4" />
             Print Receipt
+          </Button>
+          <Button className="bg-green-600 hover:bg-green-700 flex items-center gap-2">
+            <Download className="w-4 h-4" />
+            Save
           </Button>
         </div>
       </DialogContent>

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 export interface CartItem {
   id: number;
@@ -10,7 +10,20 @@ export interface CartItem {
 }
 
 export function useCart() {
-  const [items, setItems] = useState<CartItem[]>([]);
+  // Load from localStorage on first render
+  const [items, setItems] = useState<CartItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('pos_cart');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Save to localStorage whenever cart changes
+  useEffect(() => {
+    localStorage.setItem('pos_cart', JSON.stringify(items));
+  }, [items]);
 
   const addToCart = useCallback((product: any, quantity: number = 1) => {
     setItems((prevItems) => {
@@ -42,25 +55,32 @@ export function useCart() {
     setItems((prevItems) => prevItems.filter((item) => item.id !== productId));
   }, []);
 
-  const updateQuantity = useCallback((productId: number, quantity: number) => {
-    if (quantity <= 0) {
-      removeItem(productId);
-      return;
-    }
+  const updateQuantity = useCallback(
+    (productId: number, quantity: number) => {
+      if (quantity <= 0) {
+        removeItem(productId);
+        return;
+      }
 
-    setItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === productId ? { ...item, quantity } : item
-      )
-    );
-  }, [removeItem]);
+      setItems((prevItems) =>
+        prevItems.map((item) =>
+          item.id === productId ? { ...item, quantity } : item
+        )
+      );
+    },
+    [removeItem]
+  );
 
   const getSubtotal = useCallback(() => {
-    return items.reduce((total, item) => total + item.price * item.quantity, 0);
+    return items.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
   }, [items]);
 
   const clearCart = useCallback(() => {
     setItems([]);
+    localStorage.removeItem('pos_cart');
   }, []);
 
   return {

@@ -1,16 +1,16 @@
+import { DataTable } from '@/components/DataTable';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 import { DataTable } from '@/components/DataTable';
 import { ProductFormModal, type Product, type Category } from './ProductFormModal';
 import { getColumns } from './columns';
-import { useState, useEffect, useMemo } from 'react';
-import { toast } from 'sonner';
-import { Search, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -26,14 +26,44 @@ interface Props {
 
 const ITEMS_PER_PAGE = 10; // Change this to adjust items per page
 
-export default function Index({ products: initialProducts, categories }: Props) {
+export default function Index({ products }: { products: any[] }) {
+    const { data, setData, post, put, delete: destroy } = useForm({
+        name: '',
+        price: '',
+    });
+
+    const submit = (e: React.FormEvent) => {
+        e.preventDefault();
+        post('/products');
+    };
+
+    const update = (product: any) => {
+        const newName = prompt('New name:', product.name);
+        const newPrice = prompt('New price:', product.price);
+
+        if (newName && newPrice) {
+            put(`/products/${product.id}`, {
+                data: {
+                    name: newName,
+                    price: newPrice,
+                },
+            });
+<<<<<<< HEAD
+export default function Index({
+    products: initialProducts,
+    categories,
+}: Props) {
     const { props } = usePage();
     const flash = props.flash as any;
     const [modalOpen, setModalOpen] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState<Product | undefined>();
+    const [selectedProduct, setSelectedProduct] = useState<
+        Product | undefined
+    >();
     const [products, setProducts] = useState(initialProducts);
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+    const [selectedCategory, setSelectedCategory] = useState<number | null>(
+        null,
+    );
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
@@ -52,7 +82,7 @@ export default function Index({ products: initialProducts, categories }: Props) 
     const filteredProducts = useMemo(() => {
         return products.filter(product => {
             const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
-            const matchesCategory = selectedCategory === null || product.categorie_id === selectedCategory;
+            const matchesCategory = selectedCategory === null || product.category_id === selectedCategory;
             return matchesSearch && matchesCategory;
         });
     }, [products, searchQuery, selectedCategory]);
@@ -63,34 +93,35 @@ export default function Index({ products: initialProducts, categories }: Props) 
     const endIndex = startIndex + ITEMS_PER_PAGE;
     const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
 
-    const handleEdit = (product: Product) => {
-        console.log('Editing product:', product);
-        setSelectedProduct(product);
+    const handleEdit = (product: any) => {
+        // Cast to ProductFormModal.Product type
+        const p = product as Product;
+        setSelectedProduct(p);
         setModalOpen(true);
+=======
+export default function Index({ products }: { products: any[] }) {
+    const { data, setData, post, put, delete: destroy } = useForm({
+        name: '',
+        price: '',
+    });
+
+    const submit = (e: React.FormEvent) => {
+        e.preventDefault();
+        post('/products');
+>>>>>>> 2ed229e62c0db40a52a7d1b338716046be45d1fa
     };
 
-    const handleCreate = () => {
-        console.log('Creating new product');
-        setSelectedProduct(undefined);
-        setModalOpen(true);
-    };
+    const update = (product: any) => {
+        const newName = prompt('New name:', product.name);
+        const newPrice = prompt('New price:', product.price);
 
-    const handleModalClose = (open: boolean) => {
-        setModalOpen(open);
-        if (!open) {
-            setSelectedProduct(undefined);
-        }
-    };
-
-    const handleClearFilters = () => {
-        setSearchQuery('');
-        setSelectedCategory(null);
-        setCurrentPage(1); // Reset to first page
-    };
-
-    const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
+        if (newName && newPrice) {
+            put(`/products/${product.id}`, {
+                data: {
+                    name: newName,
+                    price: newPrice,
+                },
+            });
         }
     };
 
@@ -111,28 +142,88 @@ export default function Index({ products: initialProducts, categories }: Props) 
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Products" />
 
-            <div className="p-4 space-y-4">
+            <div className="space-y-4 p-4">
                 {/* Header */}
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                     <h1 className="text-2xl font-bold">Products</h1>
                     <Button onClick={handleCreate}>+ Add Product</Button>
                 </div>
 
+                {/* CREATE */}
+                <form onSubmit={submit} className="mb-4">
+                    <input
+                        type="text"
+                        placeholder="Product name"
+                        className="border p-2 mr-2"
+                        onChange={(e) => setData('name', e.target.value)}
+                    />
+
+                    <input
+                        type="number"
+                        placeholder="Price"
+                        className="border p-2 mr-2"
+                        onChange={(e) => setData('price', e.target.value)}
+                    />
+
+                    <button className="bg-blue-500 text-white px-4 py-2 rounded">
+                        Add
+                    </button>
+                </form>
+
+                {/* LIST */}
+                <table className="w-full border">
+                    <thead>
+                        <tr className="bg-gray-100">
+                            <th className="border p-2">ID</th>
+                            <th className="border p-2">Name</th>
+                            <th className="border p-2">Price</th>
+                            <th className="border p-2">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {products.map((p) => (
+                            <tr key={p.id}>
+                                <td className="border p-2">{p.id}</td>
+                                <td className="border p-2">{p.name}</td>
+                                <td className="border p-2">{p.price}</td>
+                                <td className="border p-2">
+
+                                    <button
+                                        onClick={() => update(p)}
+                                        className="bg-yellow-500 text-white px-3 py-1 rounded mr-2"
+                                    >
+                                        Edit
+                                    </button>
+
+                                    <button
+                                        onClick={() => remove(p.id)}
+                                        className="bg-red-500 text-white px-3 py-1 rounded"
+                                    >
+                                        Delete
+                                    </button>
+
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+<<<<<<< HEAD
                 {/* Search Bar */}
                 <div className="flex gap-4">
                     <div className="relative w-96">
-                        <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                        <Search className="absolute top-3 left-3 h-5 w-5 text-gray-400" />
                         <Input
                             type="text"
                             placeholder="Search products by name..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-10 w-full"
+                            className="w-full pl-10"
                         />
                         {searchQuery && (
                             <button
                                 onClick={() => setSearchQuery('')}
-                                className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                                className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
                             >
                                 <X className="h-5 w-5" />
                             </button>
@@ -142,26 +233,48 @@ export default function Index({ products: initialProducts, categories }: Props) 
 
                 {/* Category Filter */}
                 <div className="space-y-2">
-                    <label className="text-sm font-semibold text-gray-700">Filter by Category:</label>
-                    <NativeSelect value={selectedCategory?.toString() || ''} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedCategory(e.target.value ? parseInt(e.target.value) : null)}>
-                        <NativeSelectOption value="">All Categories</NativeSelectOption>
+                    <div className="text-sm font-semibold text-gray-700">Filter by Category:</div>
+                    <div className="flex flex-wrap gap-2">
+                        <Badge
+                            variant={selectedCategory === null ? 'default' : 'outline'}
+                            className="cursor-pointer px-3 py-2"
+                            onClick={() => setSelectedCategory(null)}
+                        >
+                            All Categories
+                        </Badge>
+
                         {categories.map((category) => (
-                            <NativeSelectOption key={category.id} value={category.id.toString()}>
+                            <Badge
+                                key={category.id}
+                                variant={selectedCategory === category.id ? 'default' : 'outline'}
+                                className="cursor-pointer px-3 py-2 hover:bg-gray-200 transition"
+                                onClick={() => setSelectedCategory(category.id)}
+                            >
                                 {category.categorie_name}
-                            </NativeSelectOption>
+                            </Badge>
                         ))}
                     </NativeSelect>
                 </div>
 
                 {/* Active Filters Display */}
                 {(searchQuery || selectedCategory !== null) && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex justify-between items-center">
+                    <div className="flex items-center justify-between rounded-lg border border-blue-200 bg-blue-50 p-3">
                         <div className="text-sm text-blue-800">
-                            Showing <span className="font-semibold">{filteredProducts.length}</span> of <span className="font-semibold">{products.length}</span> products
+                            Showing{' '}
+                            <span className="font-semibold">
+                                {filteredProducts.length}
+                            </span>{' '}
+                            of{' '}
+                            <span className="font-semibold">
+                                {products.length}
+                            </span>{' '}
+                            products
                             {searchQuery && ` matching "${searchQuery}"`}
-                            {selectedCategory && categories.find(c => c.id === selectedCategory) && (
-                                ` in ${categories.find(c => c.id === selectedCategory)?.categorie_name}`
-                            )}
+                            {selectedCategory &&
+                                categories.find(
+                                    (c) => c.id === selectedCategory,
+                                ) &&
+                                ` in ${categories.find((c) => c.id === selectedCategory)?.category_name}`}
                         </div>
                         <Button
                             variant="ghost"
@@ -180,11 +293,33 @@ export default function Index({ products: initialProducts, categories }: Props) 
                         <DataTable columns={columns} data={paginatedProducts} />
 
                         {/* Pagination Controls */}
-                        <div className="flex items-center justify-between mt-6 p-4 bg-gray-50 rounded-lg border">
+                        <div className="mt-6 flex items-center justify-between rounded-lg border bg-gray-50 p-4">
                             <div className="text-sm text-gray-600">
-                                Page <span className="font-semibold">{currentPage}</span> of <span className="font-semibold">{totalPages}</span>
+                                Page{' '}
+                                <span className="font-semibold">
+                                    {currentPage}
+                                </span>{' '}
+                                of{' '}
+                                <span className="font-semibold">
+                                    {totalPages}
+                                </span>
                                 {' | '}
-                                Showing <span className="font-semibold">{startIndex + 1}</span> to <span className="font-semibold">{Math.min(endIndex, filteredProducts.length)}</span> of <span className="font-semibold">{filteredProducts.length}</span> products
+                                Showing{' '}
+                                <span className="font-semibold">
+                                    {startIndex + 1}
+                                </span>{' '}
+                                to{' '}
+                                <span className="font-semibold">
+                                    {Math.min(
+                                        endIndex,
+                                        filteredProducts.length,
+                                    )}
+                                </span>{' '}
+                                of{' '}
+                                <span className="font-semibold">
+                                    {filteredProducts.length}
+                                </span>{' '}
+                                products
                             </div>
 
                             <div className="flex gap-2">
@@ -201,13 +336,20 @@ export default function Index({ products: initialProducts, categories }: Props) 
 
                                 {/* Page Numbers */}
                                 <div className="flex gap-1">
-                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                    {Array.from(
+                                        { length: totalPages },
+                                        (_, i) => i + 1,
+                                    ).map((page) => (
                                         <Button
                                             key={page}
-                                            variant={currentPage === page ? 'default' : 'outline'}
+                                            variant={
+                                                currentPage === page
+                                                    ? 'default'
+                                                    : 'outline'
+                                            }
                                             size="sm"
                                             onClick={() => setCurrentPage(page)}
-                                            className="w-10 h-10 p-0"
+                                            className="h-10 w-10 p-0"
                                         >
                                             {page}
                                         </Button>
@@ -228,8 +370,8 @@ export default function Index({ products: initialProducts, categories }: Props) 
                         </div>
                     </>
                 ) : (
-                    <div className="text-center py-12">
-                        <p className="text-gray-500 text-lg">
+                    <div className="py-12 text-center">
+                        <p className="text-lg text-gray-500">
                             No products found matching your criteria.
                         </p>
                         <Button
@@ -249,6 +391,67 @@ export default function Index({ products: initialProducts, categories }: Props) 
                     product={selectedProduct}
                     categories={categories}
                 />
+=======
+                {/* CREATE */}
+                <form onSubmit={submit} className="mb-4">
+                    <input
+                        type="text"
+                        placeholder="Product name"
+                        className="border p-2 mr-2"
+                        onChange={(e) => setData('name', e.target.value)}
+                    />
+
+                    <input
+                        type="number"
+                        placeholder="Price"
+                        className="border p-2 mr-2"
+                        onChange={(e) => setData('price', e.target.value)}
+                    />
+
+                    <button className="bg-blue-500 text-white px-4 py-2 rounded">
+                        Add
+                    </button>
+                </form>
+
+                {/* LIST */}
+                <table className="w-full border">
+                    <thead>
+                        <tr className="bg-gray-100">
+                            <th className="border p-2">ID</th>
+                            <th className="border p-2">Name</th>
+                            <th className="border p-2">Price</th>
+                            <th className="border p-2">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {products.map((p) => (
+                            <tr key={p.id}>
+                                <td className="border p-2">{p.id}</td>
+                                <td className="border p-2">{p.name}</td>
+                                <td className="border p-2">{p.price}</td>
+                                <td className="border p-2">
+
+                                    <button
+                                        onClick={() => update(p)}
+                                        className="bg-yellow-500 text-white px-3 py-1 rounded mr-2"
+                                    >
+                                        Edit
+                                    </button>
+
+                                    <button
+                                        onClick={() => remove(p.id)}
+                                        className="bg-red-500 text-white px-3 py-1 rounded"
+                                    >
+                                        Delete
+                                    </button>
+
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+>>>>>>> 2ed229e62c0db40a52a7d1b338716046be45d1fa
             </div>
         </AppLayout>
     );

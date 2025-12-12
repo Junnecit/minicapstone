@@ -16,7 +16,7 @@ import { index as productsIndex } from '@/routes/products';
 import {index as transactionsIndex} from '@/routes/transactions';
 import {index as posIndex} from '@/routes/pos';
 import { type NavItem } from '@/types';
-import { Link, router } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { SquareUserRound, PhilippinePeso, Cog ,LayoutGrid,ShoppingBasket,Weight,Columns4,Wrench } from 'lucide-react';
 import AppLogo from './app-logo';
 import { useState } from 'react';
@@ -54,8 +54,13 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Sales',
-        href: 'sales',
+        href: '#',
         icon: PhilippinePeso,
+    },
+    {
+        title: 'Services',
+        href: '#',
+        icon:  Clipboard,   
     },
 ];
 

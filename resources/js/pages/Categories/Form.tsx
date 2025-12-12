@@ -18,13 +18,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 interface Props {
     category?: {
         id: number;
-        categorie_name: string;
+        category_name: string;
     };
 }
 
 export default function Form({ category }: Props) {
     const { data, setData, post, put, processing, errors } = useForm({
-        categorie_name: category?.categorie_name || '',
+        category_name: category?.category_name || '',
     });
     const { props } = usePage();
     const flash = props.flash as any;
@@ -58,16 +58,16 @@ export default function Form({ category }: Props) {
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <Label htmlFor="categorie_name">Category Name *</Label>
+                        <Label htmlFor="category_name">Category Name *</Label>
                         <Input
-                            id="categorie_name"
-                            value={data.categorie_name}
-                            onChange={(e) => setData('categorie_name', e.target.value)}
+                            id="category_name"
+                            value={data.category_name}
+                            onChange={(e) => setData('category_name', e.target.value)}
                             placeholder="Enter category name"
-                            className={errors.categorie_name ? 'border-red-500' : ''}
+                            className={errors.category_name ? 'border-red-500' : ''}
                         />
-                        {errors.categorie_name && (
-                            <p className="text-red-500 text-sm mt-1">{errors.categorie_name}</p>
+                        {errors.category_name && (
+                            <p className="text-red-500 text-sm mt-1">{errors.category_name}</p>
                         )}
                     </div>
 

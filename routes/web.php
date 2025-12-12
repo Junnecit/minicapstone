@@ -53,5 +53,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
 >>>>>>> ef61c757304cd0afdcb793d3fe97f77260fa4fea
 
 });
- 
-require __DIR__.'/settings.php';
+
+require __DIR__ . '/settings.php';
