@@ -21,45 +21,24 @@ import { MoreHorizontal, Trash2, Edit } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export type Product = {
+export type Sale = {
     id: number;
-    name: string;
-    SKU: string;
+    product_name: string;
+    quantity: number;
     price: number;
-    cost: number;
-    stock_quantity: number;
-    image?: string;
-    category?: {
-        categorie_id: number;
-        categorie_name: string;
-    };
+    total: number;
+    customer_name?: string;
+    sale_date: string;
 };
 
-export const getColumns = (onEdit: (product: Product) => void): ColumnDef<Product>[] => [
+export const getSaleColumns = (onEdit: (sale: Sale) => void): ColumnDef<Sale>[] => [
     {
-        accessorKey: "image",
-        header: "Image",
-        cell: ({ row }) => (
-            row.original.image ? (
-                <img
-                    src={`/storage/${row.original.image}`}
-                    alt={row.original.name}
-                    className="h-10 w-10 object-cover rounded"
-                />
-            ) : (
-                <div className="h-10 w-10 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">
-                    No image
-                </div>
-            )
-        ),
+        accessorKey: "product_name",
+        header: "Product",
     },
     {
-        accessorKey: "name",
-        header: "Name",
-    },
-    {
-        accessorKey: "SKU",
-        header: "SKU",
+        accessorKey: "quantity",
+        header: "Quantity",
     },
     {
         accessorKey: "price",
@@ -67,24 +46,25 @@ export const getColumns = (onEdit: (product: Product) => void): ColumnDef<Produc
         cell: ({ row }) => `₱${parseFloat(row.original.price.toString()).toFixed(2)}`,
     },
     {
-        accessorKey: "cost",
-        header: "Cost",
-        cell: ({ row }) => `₱${parseFloat(row.original.cost.toString()).toFixed(2)}`,
+        accessorKey: "total",
+        header: "Total",
+        cell: ({ row }) => `₱${parseFloat(row.original.total.toString()).toFixed(2)}`,
     },
     {
-        accessorKey: "stock_quantity",
-        header: "Stock",
+        accessorKey: "customer_name",
+        header: "Customer",
+        cell: ({ row }) => row.original.customer_name || "—",
     },
     {
-        accessorKey: "category.categorie_name",
-        header: "Category",
-        cell: ({ row }) => row.original.category?.categorie_name || "—",
+        accessorKey: "sale_date",
+        header: "Date",
+        cell: ({ row }) => new Date(row.original.sale_date).toLocaleDateString(),
     },
     {
         id: "actions",
         header: "Actions",
         cell: ({ row }) => {
-            const product = row.original;
+            const sale = row.original;
             const [alertOpen, setAlertOpen] = useState(false);
             const [isDeleting, setIsDeleting] = useState(false);
             const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -92,24 +72,20 @@ export const getColumns = (onEdit: (product: Product) => void): ColumnDef<Produc
             const handleEdit = (e: React.MouseEvent) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Edit clicked for product:', product);
                 setDropdownOpen(false);
-                // Use setTimeout to ensure dropdown closes first
-                setTimeout(() => {
-                    onEdit(product);
-                }, 100);
+                setTimeout(() => onEdit(sale), 100);
             };
 
             const handleConfirmDelete = () => {
                 setIsDeleting(true);
-                router.delete(`/products/${product.id}`, {
+                router.delete(`/sales/${sale.id}`, {
                     onSuccess: () => {
-                        toast.success("Product deleted successfully!");
+                        toast.success("Sale deleted successfully!");
                         setAlertOpen(false);
                         setIsDeleting(false);
                     },
                     onError: () => {
-                        toast.error("Failed to delete product");
+                        toast.error("Failed to delete sale");
                         setIsDeleting(false);
                     },
                 });
@@ -130,25 +106,25 @@ export const getColumns = (onEdit: (product: Product) => void): ColumnDef<Produc
                                     Edit
                                 </div>
                             </DropdownMenuItem>
-
                             <DropdownMenuItem
                                 onClick={(e) => {
                                     e.preventDefault();
                                     setAlertOpen(true);
                                 }}
-                            >  <div className="flex items-center text-red-500">
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete
-                            </div>
+                            >
+                                <div className="flex items-center text-red-500">
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    Delete
+                                </div>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
 
                     <AlertDialogContent>
                         <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Product</AlertDialogTitle>
+                            <AlertDialogTitle>Delete Sale</AlertDialogTitle>
                             <AlertDialogDescription>
-                                Are you sure you want to delete <strong>{product.name}</strong>? This action cannot be undone.
+                                Are you sure you want to delete the sale of <strong>{sale.product_name}</strong>? This action cannot be undone.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <div className="flex gap-2 justify-end">

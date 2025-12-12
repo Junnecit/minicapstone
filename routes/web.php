@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\POSController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\SaleController;
 
 Route::get('/', function () {
     if (auth()->check()) {
@@ -29,6 +30,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Transaction Routes
     Route::get('transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::get('transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
+
+    //Sales Routes
+    Route::resource('sales', SaleController::class);
 
 });
  

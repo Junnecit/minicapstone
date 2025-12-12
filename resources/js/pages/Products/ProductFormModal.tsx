@@ -22,7 +22,7 @@ import {
 export interface Product {
     id?: number;
     name: string;
-    category_id: number;
+    categorie_id: number;
     SKU: string;
     price: number;
     cost: number;
@@ -62,7 +62,7 @@ export function ProductFormModal({ open, onOpenChange, product, categories }: Pr
             console.log('Modal opened with product:', product);
             setFormData({
                 name: product.name || '',
-                category_id: product.category_id?.toString() || '',
+                category_id: product.categorie_id?.toString() || '',
                 SKU: product.SKU || '',
                 price: product.price?.toString() || '',
                 cost: product.cost?.toString() || '',

@@ -1,284 +1,331 @@
-import AppLayout from '@/layouts/app-layout';
-import { useState, useMemo } from 'react';
-import { usePage } from '@inertiajs/react';
-import { useCart } from '@/hooks/useCart';
-import { ProductGrid } from '@/components/POS/ProductGrid';
-import { ProductSearch } from '@/components/POS/ProductSearch';
-import { CategoryFilter } from '@/components/POS/CategoryFilter';
-import { ProductQuickView } from '@/components/POS/ProductQuickView';
 import { CartSidebar } from '@/components/POS/CartSidebar';
+import { CheckoutData, CheckoutModal } from '@/components/POS/CheckoutModal';
 import { MobileCartDrawer } from '@/components/POS/MobileCartDrawer';
-import { CheckoutModal, CheckoutData } from '@/components/POS/CheckoutModal';
+import { NativeSelect } from '@/components/POS/NativeSelect';
+import { ProductGrid } from '@/components/POS/ProductGrid';
+import { ProductQuickView } from '@/components/POS/ProductQuickView';
+import { ProductSearch } from '@/components/POS/ProductSearch';
 import { ReceiptPreview } from '@/components/POS/ReceiptPreview';
+import { useCart } from '@/hooks/useCart';
+import AppLayout from '@/layouts/app-layout';
+import { usePage } from '@inertiajs/react';
+import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 interface Product {
-  id: number;
-  name: string;
-  price: number;
-  stock: number;
-  image?: string;
-  description?: string;
-  category?: string;
-  sku?: string;
+    id: number;
+    name: string;
+    price: number;
+    stock: number;
+    image?: string;
+    description?: string;
+    category?: string;
+    sku?: string;
 }
 
 interface PageProps {
-  products: Product[];
+    products: Product[];
 }
 
 export default function POSIndex() {
-  const { props } = usePage();
-  const products = (props as any).products as Product[];
-  const csrfToken = (props as any).csrf_token || '';
+    const { props } = usePage();
+    const products = (props as any).products as Product[];
+    const csrfToken = (props as any).csrf_token || '';
 
-  const { items, addToCart, removeItem, updateQuantity, getSubtotal, clearCart } = useCart();
+    const {
+        items,
+        addToCart,
+        removeItem,
+        updateQuantity,
+        getSubtotal,
+        clearCart,
+    } = useCart();
 
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [quickViewOpen, setQuickViewOpen] = useState(false);
-  const [checkoutOpen, setCheckoutOpen] = useState(false);
-  const [receiptOpen, setReceiptOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [transactionData, setTransactionData] = useState<any>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(
+        null,
+    );
+    const [quickViewOpen, setQuickViewOpen] = useState(false);
+    const [checkoutOpen, setCheckoutOpen] = useState(false);
+    const [receiptOpen, setReceiptOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [transactionData, setTransactionData] = useState<any>(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(
+        null,
+    );
 
-  // Extract unique categories
-  const categories = useMemo(() => {
-    const cats = new Set(products.map((p) => p.category).filter(Boolean) as string[]);
-    return Array.from(cats).sort();
-  }, [products]);
-
-  // Filter products by search and category
-  const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
-      // Filter by category
-      if (selectedCategory && product.category !== selectedCategory) {
-        return false;
-      }
-
-      // Filter by search query (name or SKU)
-      if (searchQuery.trim()) {
-        const query = searchQuery.toLowerCase();
-        return (
-          product.name.toLowerCase().includes(query) ||
-          (product.sku && product.sku.toLowerCase().includes(query))
+    // Extract unique categories
+    const categories = useMemo(() => {
+        const cats = new Set(
+            products.map((p) => p.category).filter(Boolean) as string[],
         );
-      }
+        return Array.from(cats).sort();
+    }, [products]);
 
-      return true;
-    });
-  }, [products, searchQuery, selectedCategory]);
+    // Filter products by search and category
+    const filteredProducts = useMemo(() => {
+        return products.filter((product) => {
+            // Filter by category
+            if (selectedCategory && product.category !== selectedCategory) {
+                return false;
+            }
 
-  // Calculations
-  const subtotal = getSubtotal();
-  const tax = subtotal * 0.0; // 12% tax
-  const discount = 0; // Can be dynamic
-  const total = subtotal + tax - discount;
+            // Filter by search query (name or SKU)
+            if (searchQuery.trim()) {
+                const query = searchQuery.toLowerCase();
+                return (
+                    product.name.toLowerCase().includes(query) ||
+                    (product.sku && product.sku.toLowerCase().includes(query))
+                );
+            }
 
-  // Handle product quick view
-  const handleQuickView = (product: Product) => {
-    setSelectedProduct(product);
-    setQuickViewOpen(true);
-  };
+            return true;
+        });
+    }, [products, searchQuery, selectedCategory]);
 
-  // Handle add to cart
-  const handleAddToCart = (product: Product, quantity: number) => {
-    addToCart(product, quantity);
-    toast.success(`${product.name} added to cart!`);
-  };
+    // Calculations
+    const subtotal = getSubtotal();
+    const tax = subtotal * 0.0; // 12% tax
+    const discount = 0; // Can be dynamic
+    const total = subtotal + tax - discount;
 
-  // Handle checkout
-  const handleCheckout = () => {
-    if (items.length === 0) {
-      toast.error('Cart is empty');
-      return;
-    }
-    setCheckoutOpen(true);
-  };
+    // Handle product quick view
+    const handleQuickView = (product: Product) => {
+        setSelectedProduct(product);
+        setQuickViewOpen(true);
+    };
 
-  // Handle payment confirmation
-  const handleConfirmPayment = async (data: CheckoutData) => {
+    // Handle add to cart
+    const handleAddToCart = (product: Product, quantity: number) => {
+        addToCart(product, quantity);
+        toast.success(`${product.name} added to cart!`);
+    };
+
+    // Handle checkout
+    const handleCheckout = () => {
+        if (items.length === 0) {
+            toast.error('Cart is empty');
+            return;
+        }
+        setCheckoutOpen(true);
+    };
+
+    // Handle payment confirmation
+const handleConfirmPayment = async (data: CheckoutData) => {
     setIsLoading(true);
 
     try {
-      const payloadData = {
-        items: items.map((item) => ({
-          id: item.id,
-          quantity: item.quantity,
-          price: item.price,
-        })),
-        subtotal,
-        tax,
-        discount,
-        total,
-        payment_method: data.paymentMethod,
-        ...(data.paymentMethod === 'cash' && {
-          amount_received: data.amountReceived,
-        }),
-        ...(data.paymentMethod === 'gcash' && {
-          gcash_reference: data.gcashReference,
-        }),
-      };
+        const payloadData = {
+            items: items.map((item) => ({
+                id: item.id,
+                quantity: item.quantity,
+                price: item.price,
+            })),
+            subtotal,
+            tax,
+            discount,
+            total,
+            payment_method: data.paymentMethod,
+            ...(data.paymentMethod === 'cash' && {
+                amount_received: data.amountReceived,
+            }),
+            ...(data.paymentMethod === 'gcash' && {
+                gcash_reference: data.gcashReference,
+            }),
+        };
 
-      const response = await fetch('/pos/checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': csrfToken,
-        },
-        body: JSON.stringify(payloadData),
-      });
+        const response = await fetch('/pos/checkout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken,
+            },
+            body: JSON.stringify(payloadData),
+        });
 
-      // Check if response is JSON
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        const text = await response.text();
-        console.error('Server returned non-JSON response:', text.substring(0, 500));
-        toast.error('Server error: Invalid response format. Check browser console for details.');
-        setIsLoading(false);
-        return;
-      }
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('Server returned non-JSON response:', text.substring(0, 500));
+            toast.error('Server error: Invalid response format.');
+            setIsLoading(false);
+            return;
+        }
 
-      const result = await response.json();
+        const result = await response.json();
 
-      if (!response.ok) {
-        toast.error(result.message || 'Checkout failed');
-        setIsLoading(false);
-        return;
-      }
+        if (!response.ok) {
+            toast.error(result.message || 'Checkout failed');
+            setIsLoading(false);
+            return;
+        }
 
-      if (!result.success) {
-        toast.error(result.message || 'Transaction failed');
-        setIsLoading(false);
-        return;
-      }
+        if (!result.success) {
+            toast.error(result.message || 'Transaction failed');
+            setIsLoading(false);
+            return;
+        }
 
-      // Set receipt data
-      setTransactionData({
-        reference_number: result.transaction.reference_number,
-        items,
-        subtotal,
-        tax,
-        discount,
-        total,
-        paymentMethod: data.paymentMethod,
-        amountReceived: data.amountReceived,
-        change: data.paymentMethod === 'cash' 
-          ? data.amountReceived! - total 
-          : undefined,
-        gcashReference: data.gcashReference,
-        timestamp: new Date().toLocaleString(),
-      });
+        // FRONTEND: Deduct stock immediately
+        items.forEach((item) => {
+            const prodIndex = products.findIndex((p) => p.id === item.id);
+            if (prodIndex !== -1) {
+                products[prodIndex].stock = Math.max(
+                    0,
+                    products[prodIndex].stock - item.quantity
+                );
+            }
+        });
 
-      // Clear cart and show receipt
-      clearCart();
-      setCheckoutOpen(false);
-      setReceiptOpen(true);
-      toast.success('Payment successful!');
+        // Set receipt data
+        setTransactionData({
+            reference_number: result.transaction.reference_number,
+            items,
+            subtotal,
+            tax,
+            discount,
+            total,
+            paymentMethod: data.paymentMethod,
+            amountReceived: data.amountReceived,
+            change:
+                data.paymentMethod === 'cash'
+                    ? data.amountReceived! - total
+                    : undefined,
+            gcashReference: data.gcashReference,
+            timestamp: new Date().toLocaleString(),
+        });
+
+        // Clear cart and show receipt
+        clearCart();
+        setCheckoutOpen(false);
+        setReceiptOpen(true);
+        toast.success('Payment successful and stock updated!');
     } catch (error) {
-      console.error('Checkout error:', error);
-      toast.error('An error occurred during checkout');
+        console.error('Checkout error:', error);
+        toast.error('An error occurred during checkout');
     } finally {
-      setIsLoading(false);
+        setIsLoading(false);
     }
-  };
+};
 
-  // Close receipt and reset data
-  const handleCloseReceipt = () => {
-    setReceiptOpen(false);
-    setTransactionData(null);
-  };
+    // Close receipt and reset data
+    const handleCloseReceipt = () => {
+        setReceiptOpen(false);
+        setTransactionData(null);
+    };
 
-  return (
-    <AppLayout>
-      <div className="flex h-screen bg-gray-100">
-        {/* Main Content */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="p-6 space-y-6">
-            {/* Header */}
-            <div className="flex justify-between items-center">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Point of Sale</h1>
-                <p className="text-gray-600 mt-1">Browse and select products</p>
-              </div>
-              {/* Mobile Cart Button */}
-              <div className="lg:hidden">
-                <MobileCartDrawer
-                  items={items}
-                  subtotal={subtotal}
-                  tax={tax}
-                  total={total}
-                  onUpdateQuantity={updateQuantity}
-                  onRemoveItem={removeItem}
-                  onCheckout={handleCheckout}
-                  isLoading={isLoading}
-                />
-              </div>
+    return (
+        <AppLayout>
+            <div className="flex h-screen bg-white-100">
+                {/* Main Content */}
+                <div className="flex-1 overflow-y-auto">
+                    <div className="space-y-6 p-6">
+                        {/* Header */}
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h1 className="text-3xl font-bold text-gray-900">
+                                    Point of Sale
+                                </h1>
+                                <p className="mt-1 text-gray-600">
+                                    Browse and select products
+                                </p>
+                            </div>
+                            {/* Mobile Cart Button */}
+                            <div className="lg:hidden">
+                                <MobileCartDrawer
+                                    items={items}
+                                    subtotal={subtotal}
+                                    tax={tax}
+                                    total={total}
+                                    onUpdateQuantity={updateQuantity}
+                                    onRemoveItem={removeItem}
+                                    onCheckout={handleCheckout}
+                                    isLoading={isLoading}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Search Bar */}
+                        <ProductSearch
+                            searchQuery={searchQuery}
+                            onSearchChange={setSearchQuery}
+                        />
+
+                        {/* Category Filter using NativeSelect */}
+                        <div className="max-w-xs">
+                            <NativeSelect
+                                value={selectedCategory || ''}
+                                onChange={(e) =>
+                                    setSelectedCategory(e.target.value || null)
+                                }
+                                className="w-full"
+                            >
+                                <option value="">All Categories</option>
+                                {categories.map((cat) => (
+                                    <option key={cat} value={cat}>
+                                        {cat}
+                                    </option>
+                                ))}
+                            </NativeSelect>
+                        </div>
+
+                        {/* Products Grid */}
+                        {filteredProducts.length > 0 ? (
+                            <ProductGrid
+                                products={filteredProducts}
+                                onQuickView={handleQuickView}
+                            />
+                        ) : (
+                            <div className="py-12 text-center">
+                                <p className="text-lg text-gray-500">
+                                    No products found matching your search
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Desktop Cart Sidebar */}
+                <div className="hidden lg:block">
+                    <CartSidebar
+                        items={items}
+                        subtotal={subtotal}
+                        tax={tax}
+                        total={total}
+                        onUpdateQuantity={updateQuantity}
+                        onRemoveItem={removeItem}
+                        onCheckout={handleCheckout}
+                        isLoading={isLoading}
+                    />
+                </div>
             </div>
 
-            {/* Search Bar */}
-            <ProductSearch searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-
-            {/* Category Filter */}
-            <CategoryFilter
-              categories={categories}
-              selectedCategory={selectedCategory}
-              onCategoryChange={setSelectedCategory}
+            {/* Quick View Dialog */}
+            <ProductQuickView
+                product={selectedProduct}
+                open={quickViewOpen}
+                onOpenChange={setQuickViewOpen}
+                onAddToCart={handleAddToCart}
             />
 
-            {/* Products Grid */}
-            {filteredProducts.length > 0 ? (
-              <ProductGrid products={filteredProducts} onQuickView={handleQuickView} />
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-gray-500 text-lg">No products found matching your search</p>
-              </div>
-            )}
-          </div>
-        </div>
+            {/* Checkout Modal */}
+            <CheckoutModal
+                open={checkoutOpen}
+                subtotal={subtotal}
+                tax={tax}
+                discount={discount}
+                total={total}
+                onClose={() => !isLoading && setCheckoutOpen(false)}
+                onConfirm={handleConfirmPayment}
+                isLoading={isLoading}
+            />
 
-        {/* Desktop Cart Sidebar */}
-        <div className="hidden lg:block">
-          <CartSidebar
-            items={items}
-            subtotal={subtotal}
-            tax={tax}
-            total={total}
-            onUpdateQuantity={updateQuantity}
-            onRemoveItem={removeItem}
-            onCheckout={handleCheckout}
-            isLoading={isLoading}
-          />
-        </div>
-      </div>
-
-      {/* Quick View Dialog */}
-      <ProductQuickView
-        product={selectedProduct}
-        open={quickViewOpen}
-        onOpenChange={setQuickViewOpen}
-        onAddToCart={handleAddToCart}
-      />
-
-      {/* Checkout Modal */}
-      <CheckoutModal
-        open={checkoutOpen}
-        subtotal={subtotal}
-        tax={tax}
-        discount={discount}
-        total={total}
-        onClose={() => !isLoading && setCheckoutOpen(false)}
-        onConfirm={handleConfirmPayment}
-        isLoading={isLoading}
-      />
-
-      {/* Receipt Preview */}
-      <ReceiptPreview
-        open={receiptOpen}
-        onClose={handleCloseReceipt}
-        transactionData={transactionData}
-      />
-    </AppLayout>
-  );
+            {/* Receipt Preview */}
+            <ReceiptPreview
+                open={receiptOpen}
+                onClose={handleCloseReceipt}
+                transactionData={transactionData}
+            />
+        </AppLayout>
+    );
 }

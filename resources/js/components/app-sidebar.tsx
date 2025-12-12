@@ -27,7 +27,7 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'categories',
+        title: 'Categories',
         href: categoriesIndex(),
         icon: Columns4,
     },
@@ -53,7 +53,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Sales',
-        href: '#',
+        href: 'sales',
         icon: PhilippinePeso,
     },
 ];

@@ -51,7 +51,7 @@ export default function Index({ products: initialProducts, categories }: Props) 
     const filteredProducts = useMemo(() => {
         return products.filter(product => {
             const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
-            const matchesCategory = selectedCategory === null || product.category_id === selectedCategory;
+            const matchesCategory = selectedCategory === null || product.categorie_id === selectedCategory;
             return matchesSearch && matchesCategory;
         });
     }, [products, searchQuery, selectedCategory]);
