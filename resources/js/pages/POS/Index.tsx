@@ -1,3 +1,13 @@
+<<<<<<< HEAD
+=======
+import AppLayout from '@/layouts/app-layout';
+import { useState, useMemo } from 'react';
+import { usePage } from '@inertiajs/react';
+import { useCart } from '@/hooks/useCart';
+import { ProductGrid } from '@/components/POS/ProductGrid';
+import { ProductSearch } from '@/components/POS/ProductSearch';
+import { ProductQuickView } from '@/components/POS/ProductQuickView';
+>>>>>>> ef61c757304cd0afdcb793d3fe97f77260fa4fea
 import { CartSidebar } from '@/components/POS/CartSidebar';
 import { CheckoutData, CheckoutModal } from '@/components/POS/CheckoutModal';
 import { MobileCartDrawer } from '@/components/POS/MobileCartDrawer';
@@ -11,7 +21,11 @@ import AppLayout from '@/layouts/app-layout';
 import { usePage } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
-
+import {
+  NativeSelect,
+  NativeSelectOptGroup,
+  NativeSelectOption,
+} from "@/components/ui/native-select"
 interface Product {
     id: number;
     name: string;
@@ -300,6 +314,7 @@ const handleConfirmPayment = async (data: CheckoutData) => {
                 </div>
             </div>
 
+<<<<<<< HEAD
             {/* Quick View Dialog */}
             <ProductQuickView
                 product={selectedProduct}
@@ -307,6 +322,23 @@ const handleConfirmPayment = async (data: CheckoutData) => {
                 onOpenChange={setQuickViewOpen}
                 onAddToCart={handleAddToCart}
             />
+=======
+            {/* Search Bar */}
+            <ProductSearch searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+
+            {/* Category Filter */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-700">Filter by Category:</label>
+              <NativeSelect value={selectedCategory || ''} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedCategory(e.target.value || null)}>
+                <NativeSelectOption value="">All Categories</NativeSelectOption>
+                {categories.map((category) => (
+                  <NativeSelectOption key={category} value={category}>
+                    {category}
+                  </NativeSelectOption>
+                ))}
+              </NativeSelect>
+            </div>
+>>>>>>> ef61c757304cd0afdcb793d3fe97f77260fa4fea
 
             {/* Checkout Modal */}
             <CheckoutModal
